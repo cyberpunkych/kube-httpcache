@@ -21,6 +21,10 @@ func (v *EndpointWatcher) Run() (chan *EndpointConfig, chan error) {
 
 func (v *EndpointWatcher) watch(updates chan *EndpointConfig, errors chan error) {
 	for {
+
+		glog.Info("v.serviceName: %s", v.serviceName)
+		glog.Info("v.namespace: %s", v.namespace)
+		glog.Info(v.client.CoreV1().Endpoints(v.namespace))
 		w, err := v.client.CoreV1().Endpoints(v.namespace).Watch(metav1.ListOptions{
 			FieldSelector: fields.OneTermEqualSelector("metadata.name", v.serviceName).String(),
 		})

@@ -29,18 +29,27 @@ RUN         set -x \
                 gnupg \
                 apt-transport-https \
             && \
-            curl -Ss -L https://packagecloud.io/varnishcache/varnish60lts/gpgkey | apt-key add - \
+            curl -Ss -L https://packagecloud.io/varnishcache/varnish63/gpgkey | apt-key add - \
             && \
             printf "%s\n%s" \
-                "deb https://packagecloud.io/varnishcache/varnish60lts/debian/ stretch main" \
-                "deb-src https://packagecloud.io/varnishcache/varnish60lts/debian/ stretch main" \
-            > "/etc/apt/sources.list.d/varnishcache_varnish60lts.list" \
+                "deb https://packagecloud.io/varnishcache/varnish63/debian/ stretch main" \
+                "deb-src https://packagecloud.io/varnishcache/varnish63/debian/ stretch main" \
+            > "/etc/apt/sources.list.d/varnishcache_varnish63.list" \
             && \
-            apt-get -qq update && apt-get -qq install varnish \
+            apt-get -qq update && apt-get -qq install git varnish automake varnish-dev libtool python-docutils build-essential \
             && \
             apt-get -qq purge curl gnupg && \
             apt-get -qq autoremove && apt-get -qq autoclean && \
             rm -rf /var/cache/*
+
+RUN         cd /tmp && \
+            git clone https://github.com/mrrva/libvmod-fs && \
+            cd ./libvmod-fs/ && \
+            ./autogen.sh && \
+            ./configure && \
+            make && \
+            make install
+
 
 RUN         mkdir /exporter && \
             chown varnish /exporter
